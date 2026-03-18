@@ -10,5 +10,5 @@
   ],
   "version": 1,
   "settings-schema": "org.gnome.shell.extensions.claude-2x-hours",
-  "url": ""
+  "url": "https://github.com/jphein/claudedoublehours"
 }
