@@ -1,0 +1,182 @@
+/* ═══════════════════════════════════════════════════════════════
+   Claude 2× Hours Tracker — Stylesheet
+   A warm golden theme for active 2× hours, cool blue-gray for peak
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Panel badge ──────────────────────────────────────────────── */
+
+.c2x-panel-box {
+    border-radius: 14px;
+    padding: 2px 12px 2px 10px;
+    margin: 3px 4px;
+    spacing: 5px;
+    transition-duration: 400ms;
+}
+
+.c2x-active {
+    background-gradient-direction: horizontal;
+    background-gradient-start: rgba(255, 183, 77, 0.30);
+    background-gradient-end: rgba(255, 138, 101, 0.18);
+    border: 1px solid rgba(255, 183, 77, 0.45);
+    box-shadow: 0 0 12px 0 rgba(255, 183, 77, 0.20);
+}
+
+.c2x-inactive {
+    background-color: rgba(120, 144, 156, 0.14);
+    border: 1px solid rgba(120, 144, 156, 0.22);
+}
+
+.c2x-ended {
+    background-color: rgba(100, 100, 110, 0.08);
+    border: 1px solid rgba(100, 100, 110, 0.15);
+}
+
+/* ── Status icon ──────────────────────────────────────────────── */
+
+.c2x-icon {
+    font-size: 13pt;
+    font-weight: bold;
+    margin-right: 2px;
+}
+
+.c2x-icon-gold  { color: #FFD54F; }
+.c2x-icon-muted { color: #78909C; }
+.c2x-icon-dim   { color: rgba(120, 144, 156, 0.35); }
+
+/* ── Status text ─────────────────────────────────────────────── */
+
+.c2x-text {
+    font-size: 10pt;
+    font-weight: bold;
+}
+
+.c2x-text-gold  { color: #FFCC80; }
+.c2x-text-muted { color: #90A4AE; }
+.c2x-text-dim   { color: rgba(144, 164, 174, 0.4); }
+
+/* ── Popup header ─────────────────────────────────────────────── */
+
+.c2x-header-box {
+    padding: 10px 16px 6px 16px;
+    min-width: 270px;
+}
+
+.c2x-header {
+    font-size: 12pt;
+    font-weight: bold;
+}
+
+.c2x-header-gold  { color: #FFD54F; }
+.c2x-header-muted { color: #90A4AE; }
+
+.c2x-subheader {
+    font-size: 9pt;
+    margin-top: 3px;
+}
+
+.c2x-sub-gold  { color: #FFCC80; }
+.c2x-sub-muted { color: #78909C; }
+
+/* ── Sections ─────────────────────────────────────────────────── */
+
+.c2x-section {
+    padding: 4px 12px;
+    min-width: 270px;
+}
+
+/* ── Labels & values ──────────────────────────────────────────── */
+
+.c2x-label {
+    color: #90A4AE;
+    font-size: 10pt;
+}
+
+.c2x-value {
+    color: #ECEFF1;
+    font-size: 10pt;
+    font-weight: bold;
+}
+
+.c2x-value-gold { color: #FFD54F; }
+
+/* ── Progress bar ─────────────────────────────────────────────── */
+
+.c2x-progress-track {
+    background-color: rgba(255, 255, 255, 0.07);
+    border-radius: 4px;
+    height: 7px;
+    margin: 10px 0 4px 0;
+    min-width: 240px;
+}
+
+.c2x-progress-fill {
+    border-radius: 4px;
+    height: 7px;
+    transition-duration: 600ms;
+}
+
+.c2x-fill-gold {
+    background-gradient-direction: horizontal;
+    background-gradient-start: #FFB74D;
+    background-gradient-end: #FF8A65;
+    box-shadow: 0 0 6px 0 rgba(255, 183, 77, 0.45);
+}
+
+.c2x-fill-muted {
+    background-gradient-direction: horizontal;
+    background-gradient-start: #78909C;
+    background-gradient-end: #546E7A;
+}
+
+/* ── Percent ──────────────────────────────────────────────────── */
+
+.c2x-percent {
+    font-size: 9pt;
+    color: #607D8B;
+}
+
+.c2x-percent-gold { color: #FFCC80; }
+
+/* ── Schedule ─────────────────────────────────────────────────── */
+
+.c2x-schedule-title {
+    font-size: 9pt;
+    font-weight: bold;
+    color: #607D8B;
+    margin-bottom: 6px;
+}
+
+.c2x-schedule-row {
+    spacing: 10px;
+    margin: 2px 0;
+}
+
+.c2x-sched-day {
+    font-size: 10pt;
+    color: #90A4AE;
+    min-width: 72px;
+}
+
+.c2x-sched-time {
+    font-size: 10pt;
+    color: #B0BEC5;
+}
+
+.c2x-sched-mult-gold {
+    font-size: 10pt;
+    font-weight: bold;
+    color: #FFD54F;
+}
+
+.c2x-sched-mult-muted {
+    font-size: 10pt;
+    color: #78909C;
+}
+
+/* ── Footer ───────────────────────────────────────────────────── */
+
+.c2x-footer {
+    font-size: 8pt;
+    color: rgba(144, 164, 174, 0.4);
+    padding: 4px 0 2px 0;
+}

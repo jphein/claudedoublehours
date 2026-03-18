@@ -1,0 +1,14 @@
+{
+  "name": "Claude 2x Hours Tracker",
+  "description": "Track Anthropic's Claude 2x off-peak hours promotion (March 13-27, 2026). Shows a live countdown, progress bar, and schedule with a golden glow when double hours are active.",
+  "uuid": "claude-2x-hours@claude",
+  "shell-version": [
+    "45",
+    "46",
+    "47",
+    "48"
+  ],
+  "version": 1,
+  "settings-schema": "org.gnome.shell.extensions.claude-2x-hours",
+  "url": ""
+}

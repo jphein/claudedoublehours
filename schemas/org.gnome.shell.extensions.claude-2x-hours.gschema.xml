@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.claude-2x-hours"
+          path="/org/gnome/shell/extensions/claude-2x-hours/">
+    <key name="panel-position" type="s">
+      <default>'right'</default>
+      <summary>Panel position</summary>
+      <description>Position of the indicator in the top panel (left, center, right)</description>
+    </key>
+  </schema>
+</schemalist>
