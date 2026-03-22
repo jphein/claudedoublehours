@@ -30,7 +30,7 @@ class Claude2xIndicator extends PanelMenu.Button {
         this._timerId = null;
         this._pulseActive = false;
         this._pulseIdleId = null;
-        this._destroyed = false;
+        this._cleanedUp = false;
 
         this._buildPanel();
         this._buildMenu();
@@ -396,22 +396,22 @@ class Claude2xIndicator extends PanelMenu.Button {
     }
 
     _doPulse() {
-        if (!this._pulseActive || this._destroyed) return;
+        if (!this._pulseActive || this._cleanedUp) return;
         this._iconLabel.ease({
             opacity: 130,
             duration: 2000,
             mode: Clutter.AnimationMode.EASE_IN_OUT_SINE,
             onComplete: () => {
-                if (!this._pulseActive || this._destroyed) return;
+                if (!this._pulseActive || this._cleanedUp) return;
                 this._iconLabel.ease({
                     opacity: 255,
                     duration: 2000,
                     mode: Clutter.AnimationMode.EASE_IN_OUT_SINE,
                     onComplete: () => {
-                        if (!this._pulseActive || this._destroyed) return;
+                        if (!this._pulseActive || this._cleanedUp) return;
                         this._pulseIdleId = GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
                             this._pulseIdleId = null;
-                            if (!this._pulseActive || this._destroyed)
+                            if (!this._pulseActive || this._cleanedUp)
                                 return GLib.SOURCE_REMOVE;
                             this._doPulse();
                             return GLib.SOURCE_REMOVE;
@@ -428,7 +428,7 @@ class Claude2xIndicator extends PanelMenu.Button {
             GLib.Source.remove(this._pulseIdleId);
             this._pulseIdleId = null;
         }
-        if (this._iconLabel && !this._destroyed) {
+        if (this._iconLabel && !this._cleanedUp) {
             this._iconLabel.remove_all_transitions();
             this._iconLabel.opacity = 255;
         }
@@ -444,6 +444,10 @@ class Claude2xIndicator extends PanelMenu.Button {
 
     _startTimer() {
         this._timerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
+            if (this._cleanedUp) {
+                this._timerId = null;
+                return GLib.SOURCE_REMOVE;
+            }
             const keepRunning = this._update();
             if (!keepRunning) {
                 this._timerId = null;
@@ -453,19 +457,19 @@ class Claude2xIndicator extends PanelMenu.Button {
         });
     }
 
-    destroy() {
-        this._destroyed = true;
+    // Called from disable() BEFORE destroy(). NOT a GObject vfunc,
+    // so it cannot be invoked by GC during the sweep phase.
+    _cleanup() {
+        if (this._cleanedUp) return;
+        this._cleanedUp = true;
         this._stopPulse();
         if (this._timerId) {
             GLib.Source.remove(this._timerId);
             this._timerId = null;
         }
-        // Null actor refs before super.destroy() so no stale callback
-        // can touch them during Clutter actor teardown or GC sweep
         this._iconLabel = null;
         this._textLabel = null;
         this._panelBox = null;
-        super.destroy();
     }
 });
 
@@ -487,8 +491,11 @@ export default class Claude2xExtension extends Extension {
             this._settings.disconnect(this._posChangedId);
             this._posChangedId = null;
         }
-        this._indicator?.destroy();
-        this._indicator = null;
+        if (this._indicator) {
+            this._indicator._cleanup();
+            this._indicator.destroy();
+            this._indicator = null;
+        }
         this._settings = null;
     }
 
