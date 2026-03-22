@@ -25,8 +25,11 @@ class Claude2xIndicator extends PanelMenu.Button {
         this._extensionObject = extensionObject;
         this._etTz = GLib.TimeZone.new('America/New_York');
         this._localTz = GLib.TimeZone.new_local();
+        this._promoStart = GLib.DateTime.new(this._etTz, PROMO_START.y, PROMO_START.m, PROMO_START.d, 0, 0, 0);
+        this._promoEnd = GLib.DateTime.new(this._etTz, PROMO_END.y, PROMO_END.m, PROMO_END.d, 0, 0, 0);
         this._timerId = null;
         this._pulseActive = false;
+        this._pulseIdleId = null;
 
         this._buildPanel();
         this._buildMenu();
@@ -177,8 +180,8 @@ class Claude2xIndicator extends PanelMenu.Button {
         const dow   = now.get_day_of_week(); // 1=Mon … 7=Sun
         const minuteOfDay = now.get_hour() * 60 + now.get_minute();
 
-        const promoStart = GLib.DateTime.new(this._etTz, PROMO_START.y, PROMO_START.m, PROMO_START.d, 0, 0, 0);
-        const promoEnd   = GLib.DateTime.new(this._etTz, PROMO_END.y,   PROMO_END.m,   PROMO_END.d,   0, 0, 0);
+        const promoStart = this._promoStart;
+        const promoEnd   = this._promoEnd;
 
         // Before promo
         if (now.compare(promoStart) < 0) {
@@ -312,7 +315,7 @@ class Claude2xIndicator extends PanelMenu.Button {
             this._nextValue.text = 'Mar 13, 2026';
             this._localValue.text = '\u2014';
             this._promoValue.text = 'Mar 27, 2026';
-            return;
+            return true;
         }
 
         if (s.status === 'after') {
@@ -328,7 +331,7 @@ class Claude2xIndicator extends PanelMenu.Button {
             this._nextValue.text = '\u2014';
             this._localValue.text = '\u2014';
             this._promoValue.text = 'Ended';
-            return;
+            return false;
         }
 
         if (s.isDouble) {
@@ -361,6 +364,7 @@ class Claude2xIndicator extends PanelMenu.Button {
         this._nextValue.text = `${s.etTimeStr} ET`;
         this._localValue.text = s.localTimeStr;
         this._promoValue.text = `Mar 27  (${s.daysLeft}d left)`;
+        return true;
     }
 
     _setPanel(boxClass, icon, text, mode) {
@@ -402,7 +406,13 @@ class Claude2xIndicator extends PanelMenu.Button {
                     opacity: 255,
                     duration: 2000,
                     mode: Clutter.AnimationMode.EASE_IN_OUT_SINE,
-                    onComplete: () => this._doPulse(),
+                    onComplete: () => {
+                        this._pulseIdleId = GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+                            this._pulseIdleId = null;
+                            this._doPulse();
+                            return GLib.SOURCE_REMOVE;
+                        });
+                    },
                 });
             },
         });
@@ -410,6 +420,10 @@ class Claude2xIndicator extends PanelMenu.Button {
 
     _stopPulse() {
         this._pulseActive = false;
+        if (this._pulseIdleId) {
+            GLib.Source.remove(this._pulseIdleId);
+            this._pulseIdleId = null;
+        }
         if (this._iconLabel) {
             this._iconLabel.remove_all_transitions();
             this._iconLabel.opacity = 255;
@@ -420,7 +434,11 @@ class Claude2xIndicator extends PanelMenu.Button {
 
     _startTimer() {
         this._timerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
-            this._update();
+            const keepRunning = this._update();
+            if (!keepRunning) {
+                this._timerId = null;
+                return GLib.SOURCE_REMOVE;
+            }
             return GLib.SOURCE_CONTINUE;
         });
     }
