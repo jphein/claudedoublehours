@@ -1,0 +1,9 @@
+# Binary
+*.zip
+schemas/gschemas.compiled
+
+# Boilerplate
+LICENSE
+
+# Tooling
+.claude/
