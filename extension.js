@@ -29,7 +29,8 @@ class Claude2xIndicator extends PanelMenu.Button {
         this._promoEnd = GLib.DateTime.new(this._etTz, PROMO_END.y, PROMO_END.m, PROMO_END.d, 0, 0, 0);
         this._timerId = null;
         this._pulseActive = false;
-        this._pulseIdleId = null;
+        this._pulseNextId = null;
+        this._pulseUp = true;
         this._cleanedUp = false;
 
         this._buildPanel();
@@ -396,47 +397,32 @@ class Claude2xIndicator extends PanelMenu.Button {
     }
 
     _doPulse() {
-        if (!this._pulseActive || this._cleanedUp) return;
+        if (!this._pulseActive || this._cleanedUp || !this._iconLabel) return;
+        const targetOpacity = this._pulseUp ? 255 : 130;
         this._iconLabel.ease({
-            opacity: 130,
+            opacity: targetOpacity,
             duration: 2000,
             mode: Clutter.AnimationMode.EASE_IN_OUT_SINE,
-            onComplete: () => {
-                if (!this._pulseActive || this._cleanedUp) return;
-                this._iconLabel.ease({
-                    opacity: 255,
-                    duration: 2000,
-                    mode: Clutter.AnimationMode.EASE_IN_OUT_SINE,
-                    onComplete: () => {
-                        if (!this._pulseActive || this._cleanedUp) return;
-                        this._pulseIdleId = GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
-                            this._pulseIdleId = null;
-                            if (!this._pulseActive || this._cleanedUp)
-                                return GLib.SOURCE_REMOVE;
-                            this._doPulse();
-                            return GLib.SOURCE_REMOVE;
-                        });
-                    },
-                });
-            },
+        });
+        // GC-safe: GLib timeout is not actor-bound, so it won't fire during GC sweep
+        this._pulseNextId = GLib.timeout_add(GLib.PRIORITY_LOW, 2020, () => {
+            this._pulseNextId = null;
+            if (!this._pulseActive || this._cleanedUp) return GLib.SOURCE_REMOVE;
+            this._pulseUp = !this._pulseUp;
+            this._doPulse();
+            return GLib.SOURCE_REMOVE;
         });
     }
 
     _stopPulse() {
         this._pulseActive = false;
-        if (this._pulseIdleId) {
-            GLib.Source.remove(this._pulseIdleId);
-            this._pulseIdleId = null;
+        if (this._pulseNextId) {
+            GLib.Source.remove(this._pulseNextId);
+            this._pulseNextId = null;
         }
         if (this._iconLabel && !this._cleanedUp) {
             this._iconLabel.remove_all_transitions();
             this._iconLabel.opacity = 255;
-        }
-        // remove_all_transitions fires onComplete synchronously — if a
-        // callback slipped past the guard and added a new idle, clean it up
-        if (this._pulseIdleId) {
-            GLib.Source.remove(this._pulseIdleId);
-            this._pulseIdleId = null;
         }
     }
 

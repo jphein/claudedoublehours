@@ -47,7 +47,7 @@ gnome-extensions pack --extra-source=schemas/ --force
 - **Promo dates hardcoded** — `PROMO_START` Mar 13, `PROMO_END` Mar 28 (midnight), peak = weekdays 8 AM-2 PM ET
 - **1s timer** with auto-shutdown after promo ends
 - **GLib.TimeZone** for ET→local conversion
-- **Clutter.ease()** for golden pulse animation during 2x hours
+- **Clutter.ease()** + **GLib.timeout_add()** for GC-safe golden pulse animation during 2x hours
 
 ## Conventions
 
@@ -60,5 +60,5 @@ gnome-extensions pack --extra-source=schemas/ --force
 
 - GNOME Shell extensions cannot be hot-reloaded on Wayland — must log out/in
 - St CSS is NOT web CSS: no flexbox, no `var()`, limited selectors
-- `Clutter.ease()` callbacks can fire synchronously — use `GLib.idle_add()` to avoid stack overflow in animation loops
+- **NEVER use `ease()` + `onComplete`** — if GC sweeps the actor mid-transition, GJS tries to invoke the JS callback during the sweep phase, causing compositor deadlock (black screen). Use `ease()` (no callback) + `GLib.timeout_add()` for follow-up actions instead
 - The compiled `gschemas.compiled` binary is committed for easy manual install; regenerate with `glib-compile-schemas schemas/`
