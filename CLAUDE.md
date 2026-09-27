@@ -7,7 +7,7 @@ GNOME Shell extension that tracks Anthropic's Claude 2x off-peak hours promotion
 
 - **UUID**: `claude-2x-hours@claude`
 - **GNOME Shell**: 45-48
-- **License**: GPL-3.0
+- **License**: AGPL-3.0-or-later
 - **Repo**: https://github.com/jphein/claudedoublehours
 
 ## Files
