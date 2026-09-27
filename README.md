@@ -5,7 +5,7 @@ A GNOME Shell extension that tracks Anthropic's **Claude 2x off-peak hours promo
 During off-peak hours, Claude doubles your usage limits (tokens and messages) across Claude web, desktop, mobile, Claude Code, and integrations.
 
 ![GNOME Shell 45+](https://img.shields.io/badge/GNOME_Shell-45%2B-4a86cf)
-![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue)
+![License: AGPL-3.0-or-later](https://img.shields.io/badge/License-AGPL--3.0--or--later-blue)
 
 ## Features
 
@@ -61,4 +61,4 @@ gnome-extensions prefs claude-2x-hours@claude
 
 ## License
 
-GPL-3.0
+AGPL-3.0-or-later © 2026 Jeffrey Pine Hein. See [LICENSE](LICENSE).
